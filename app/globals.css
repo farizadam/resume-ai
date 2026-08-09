@@ -1,26 +1,112 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core Brand Colors */
+  --navy-950: #0B1220;
+  --navy-900: #0F172A;
+  --navy-800: #172554;
+  --navy-700: #1E3A5F;
+  --navy-600: #2563EB;
+  --navy-500: #3B82F6;
+  --white: #FFFFFF;
+  --off-white: #F8FAFC;
+
+  /* Text Colors */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-disabled: #94A3B8;
+  --text-on-dark: #FFFFFF;
+  --text-on-primary: #FFFFFF;
+
+  /* Background Colors */
+  --background: #F8FAFC;
+  --surface: #FFFFFF;
+  --surface-secondary: #F1F5F9;
+  --surface-hover: #F8FAFC;
+  --navy-background: #0F172A;
+  --navy-background-secondary: #172554;
+  --blue-background: #EFF6FF;
+
+  /* Borders */
+  --border-default: #E2E8F0;
+  --border-light: #F1F5F9;
+  --border-medium: #CBD5E1;
+  --border-focus: #2563EB;
+
+  /* AI Colors */
+  --ai-primary: #2563EB;
+  --ai-light: #EFF6FF;
+  --ai-border: #BFDBFE;
+  --ai-text: #1E40AF;
+
+  /* Status Colors */
+  --success: #16A34A;
+  --success-light: #F0FDF4;
+  --success-border: #BBF7D0;
+  --warning: #D97706;
+  --warning-light: #FFFBEB;
+  --warning-border: #FDE68A;
+  --error: #DC2626;
+  --error-light: #FEF2F2;
+  --error-border: #FECACA;
+  --info: #2563EB;
+  --info-light: #EFF6FF;
+  --info-border: #BFDBFE;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-foreground: var(--text-primary);
+  
+  --color-navy-950: var(--navy-950);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-navy-600: var(--navy-600);
+  --color-navy-500: var(--navy-500);
+  
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-disabled: var(--text-disabled);
+  --color-text-on-dark: var(--text-on-dark);
+  
+  --color-surface: var(--surface);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-hover: var(--surface-hover);
+  --color-navy-bg: var(--navy-background);
+  --color-blue-bg: var(--blue-background);
+  
+  --color-border-default: var(--border-default);
+  --color-border-light: var(--border-light);
+  --color-border-medium: var(--border-medium);
+  --color-border-focus: var(--border-focus);
+  
+  --color-ai-primary: var(--ai-primary);
+  --color-ai-light: var(--ai-light);
+  --color-ai-border: var(--ai-border);
+  --color-ai-text: var(--ai-text);
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  font-family: Arial, Helvetica, sans-serif; /* Fallback for now */
+}
+
+/* Custom sleek scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

@@ -1,71 +1,88 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useLayoutEffect, FormEvent } from "react";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
-  disabled: boolean;
+  disabled?: boolean;
   placeholder?: string;
 }
 
 export default function ChatInput({
   onSend,
-  disabled,
+  disabled = false,
   placeholder = "Type your answer...",
 }: ChatInputProps) {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-resize textarea
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 150)}px`;
+  // useLayoutEffect prevents flickering during textarea resize
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
     }
   }, [value]);
 
-  const handleSend = () => {
+  const handleSubmit = (e?: FormEvent) => {
+    if (e) e.preventDefault();
+
     const trimmed = value.trim();
     if (!trimmed || disabled) return;
+
     onSend(trimmed);
     setValue("");
+
+    // Immediately reset height when text is cleared
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      handleSubmit();
     }
   };
 
   return (
-    <div className="bg-white border-t border-gray-200 p-4 sticky bottom-0">
-      <div className="max-w-4xl mx-auto relative flex items-center bg-gray-50 rounded-2xl border border-gray-200 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all shadow-sm">
-        <textarea
-          ref={textareaRef}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          disabled={disabled}
-          placeholder={disabled ? "Please wait..." : placeholder}
-          className="w-full bg-transparent border-none focus:ring-0 resize-none py-3 px-4 max-h-[150px] text-sm text-gray-800 disabled:opacity-50"
-          rows={1}
-        />
-        <button
-          onClick={handleSend}
-          disabled={disabled || !value.trim()}
-          className="mr-2 p-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-          aria-label="Send message"
+    <div className="bg-white border-t border-gray-200 p-4 sticky bottom-0 z-10">
+      <div className="max-w-5xl mx-auto lg:pr-[344px]">
+        {/* Semantic form wrapper for better a11y and standard submission */}
+        <form
+          onSubmit={handleSubmit}
+          className="relative flex items-end bg-gray-50 rounded-xl border border-gray-200 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all shadow-sm"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-5 h-5"
+          {/* Decorative accent bar */}
+          <div className="w-1 self-stretch rounded-l-xl bg-blue-100" aria-hidden="true" />
+
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            disabled={disabled}
+            placeholder={disabled ? "Please wait..." : placeholder}
+            aria-label="Chat message input"
+            className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 outline-none focus:outline-none resize-none py-4 px-4 max-h-[150px] text-sm text-gray-800 disabled:opacity-50 min-h-[52px]"
+            rows={1}
+          />
+
+          <button
+            type="submit"
+            disabled={disabled || !value.trim()}
+            className="mb-2 mr-2 shrink-0 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-gray-50"
+            aria-label="Send message"
           >
-            <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
-          </svg>
-        </button>
+            Send
+          </button>
+        </form>
+
+        <p className="text-xs text-gray-400 mt-2 px-2 select-none">
+          Press <kbd className="font-sans font-medium px-1 bg-gray-100 rounded">Enter</kbd> to send, <kbd className="font-sans font-medium px-1 bg-gray-100 rounded">Shift + Enter</kbd> for a new line.
+        </p>
       </div>
     </div>
   );
