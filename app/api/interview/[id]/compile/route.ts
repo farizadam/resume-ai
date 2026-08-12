@@ -5,6 +5,7 @@ import Interview from '@/models/Interview';
 import connectDB from '@/lib/mongodb';
 import { enhanceCandidateDataForAts } from '@/lib/ats-enhancer';
 import { ResumeTemplate } from '@/components/pdf/ResumeTemplate';
+import { migrateResumeData } from '@/lib/migrations';
 
 export async function GET(
     req: NextRequest,
@@ -19,7 +20,7 @@ export async function GET(
             return NextResponse.json({ error: 'Interview not found' }, { status: 404 });
         }
 
-        let candidateData = interview.candidateData;
+        let candidateData = migrateResumeData(interview.candidateData);
 
         const force = req.nextUrl.searchParams.get('force') === 'true';
 
@@ -39,7 +40,7 @@ export async function GET(
 
         // Render polished data directly to vector PDF
         const pdfStream = await renderToStream(
-            React.createElement(ResumeTemplate, { data: candidateData })
+            React.createElement(ResumeTemplate, { data: candidateData as any }) as any
         );
 
         return new NextResponse(pdfStream as any, {

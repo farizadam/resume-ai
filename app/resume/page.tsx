@@ -1,5 +1,8 @@
+"use client";
+
 import { ResumeEditor } from "@/components/resume/ResumeEditor";
-import { ResumePreview } from "@/components/resume/ResumePreview";
+import dynamic from "next/dynamic";
+const ResumePreview = dynamic(() => import("@/components/resume/ResumePreview").then(mod => mod.ResumePreview), { ssr: false });
 
 export default function ResumePage() {
   return (

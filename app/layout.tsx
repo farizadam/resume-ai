@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import AuthProvider from "@/components/auth/AuthProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,13 +18,29 @@ export const metadata: Metadata = {
   description: "Interview practice and resume building in one app.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+import SmoothScrolling from "@/components/SmoothScrolling";
+import CustomCursor from "@/components/CustomCursor";
+import Navbar from "@/components/Navbar";
+import NavbarWrapper from "@/components/NavbarWrapper";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">{children}</body>
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-background text-text-primary">
+        <CustomCursor />
+        <SmoothScrolling>
+          <AuthProvider>
+            <NavbarWrapper>
+              <Navbar />
+            </NavbarWrapper>
+            {children}
+          </AuthProvider>
+        </SmoothScrolling>
+      </body>
     </html>
   );
 }

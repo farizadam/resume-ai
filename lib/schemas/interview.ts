@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { resumeDataSchema } from "@/types/resume";
 
 export const interviewResponseSchema = z.object({
   message: z.string(),
@@ -14,7 +15,7 @@ export const interviewResponseSchema = z.object({
     "achievements",
     "final_check",
   ]),
-  candidateData: z.record(z.string(), z.any()),
+  candidateData: resumeDataSchema.default({}),
   missingInformation: z.array(z.string()).optional().default([]),
 });
 

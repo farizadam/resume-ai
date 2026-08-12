@@ -48,15 +48,15 @@ export default function ChatInput({
   };
 
   return (
-    <div className="bg-white border-t border-gray-200 p-4 sticky bottom-0 z-10">
+    <div className="bg-space-950 border-t border-glass-border p-4 sticky bottom-0 z-10">
       <div className="max-w-5xl mx-auto lg:pr-[344px]">
         {/* Semantic form wrapper for better a11y and standard submission */}
         <form
           onSubmit={handleSubmit}
-          className="relative flex items-end bg-gray-50 rounded-xl border border-gray-200 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all shadow-sm"
+          className="relative flex items-end bg-space-800 rounded-xl border border-glass-border focus-within:border-white focus-within:ring-1 focus-within:ring-white transition-all shadow-sm"
         >
           {/* Decorative accent bar */}
-          <div className="w-1 self-stretch rounded-l-xl bg-blue-100" aria-hidden="true" />
+          <div className="w-1 self-stretch rounded-l-xl bg-white/20" aria-hidden="true" />
 
           <textarea
             ref={textareaRef}
@@ -66,22 +66,22 @@ export default function ChatInput({
             disabled={disabled}
             placeholder={disabled ? "Please wait..." : placeholder}
             aria-label="Chat message input"
-            className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 outline-none focus:outline-none resize-none py-4 px-4 max-h-[150px] text-sm text-gray-800 disabled:opacity-50 min-h-[52px]"
+            className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 outline-none focus:outline-none resize-none py-4 px-4 max-h-[150px] text-sm text-white disabled:opacity-50 min-h-[52px]"
             rows={1}
           />
 
           <button
             type="submit"
             disabled={disabled || !value.trim()}
-            className="mb-2 mr-2 shrink-0 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-gray-50"
+            className="mb-2 mr-2 shrink-0 px-4 py-2 rounded-lg text-sm font-bold text-space-950 bg-white hover:bg-slate-200 disabled:bg-glass-hover disabled:text-text-muted disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-1 focus:ring-offset-space-800"
             aria-label="Send message"
           >
             Send
           </button>
         </form>
 
-        <p className="text-xs text-gray-400 mt-2 px-2 select-none">
-          Press <kbd className="font-sans font-medium px-1 bg-gray-100 rounded">Enter</kbd> to send, <kbd className="font-sans font-medium px-1 bg-gray-100 rounded">Shift + Enter</kbd> for a new line.
+        <p className="text-xs text-text-muted mt-2 px-2 select-none">
+          Press <kbd className="font-sans font-bold px-1 bg-space-800 border border-glass-border rounded">Enter</kbd> to send, <kbd className="font-sans font-bold px-1 bg-space-800 border border-glass-border rounded">Shift + Enter</kbd> for a new line.
         </p>
       </div>
     </div>

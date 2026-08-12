@@ -7,6 +7,7 @@ export interface IMessage {
 }
 
 export interface IInterview extends Document {
+  userId?: mongoose.Types.ObjectId;
   status: "active" | "completed";
   currentSection: string;
   messages: IMessage[];
@@ -38,6 +39,10 @@ const messageSchema = new Schema<IMessage>(
 
 const interviewSchema = new Schema<IInterview>(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     status: {
       type: String,
       enum: ["active", "completed"],

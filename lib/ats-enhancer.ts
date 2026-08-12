@@ -1,4 +1,5 @@
 import groq from '@/lib/groq';
+import { resumeDataSchema } from '@/types/resume';
 
 const ATS_ENHANCER_PROMPT = `
 You are an elite technical resume writer and ATS optimization expert.
@@ -21,12 +22,16 @@ REWRITING RULES:
    - Ensure the output strictly conforms to valid JSON.
    - MUST MATCH THIS EXACT JSON STRUCTURE (omit keys if missing in raw data):
    {
-     "contactInfo": { "name": "...", "email": "...", "phone": "...", "linkedin": "...", "github": "..." },
+     "contactInfo": { "name": "...", "title": "...", "email": "...", "phone": "...", "location": "...", "linkedin": "...", "github": "...", "portfolio": "..." },
      "summary": "...",
-     "technicalSkills": { "languages": [], "frameworks": [], "databases": [], "tools": [], "operatingSystems": [], "cloudPlatforms": [] },
-     "workExperience": [ { "company": "...", "position": "...", "dates": "...", "achievements": ["...", "..."] } ],
+     "technicalSkills": { "languages": [], "frameworks": [], "databases": [], "tools": [], "operatingSystems": [], "cloudPlatforms": [], "softSkills": [] },
+     "workExperience": [ { "company": "...", "position": "...", "location": "...", "startDate": "...", "endDate": "...", "isCurrent": false, "achievements": ["...", "..."] } ],
      "projects": [ { "name": "...", "description": "...", "technologies": [], "accomplishments": ["...", "..."] } ],
-     "education": { "degree": "...", "fieldOfStudy": "...", "university": "...", "dates": "..." }
+     "education": [ { "university": "...", "degree": "...", "fieldOfStudy": "...", "location": "...", "startDate": "...", "endDate": "...", "isCurrent": false, "gpa": "...", "honors": "...", "relevantCoursework": [] } ],
+     "certifications": [ { "name": "...", "issuer": "...", "date": "..." } ],
+     "languages": [ { "language": "...", "proficiency": "..." } ],
+     "awards": [ { "title": "...", "issuer": "...", "date": "...", "description": "..." } ],
+     "volunteer": [ { "organization": "...", "role": "...", "dates": "...", "description": "..." } ]
    }
 `;
 
@@ -46,7 +51,17 @@ export async function enhanceCandidateDataForAts(rawCandidateData: any) {
         });
 
         const enhancedJsonString = response.choices[0]?.message?.content || '{}';
-        return JSON.parse(enhancedJsonString);
+        const parsedJson = JSON.parse(enhancedJsonString);
+        
+        // Strict Zod validation on AI output
+        const validationResult = resumeDataSchema.safeParse(parsedJson);
+        if (validationResult.success) {
+            return validationResult.data;
+        } else {
+            console.error('ATS Enhancer JSON Validation Failed:', validationResult.error);
+            // If LLM returned bad format, return original to prevent crashing
+            return rawCandidateData;
+        }
     } catch (error) {
         console.error('ATS Enhancer Error:', error);
         // Fallback to raw candidate data if enhancement fails

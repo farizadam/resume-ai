@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Link,
 } from '@react-pdf/renderer';
+import { ResumeData } from '@/types/resume';
 
 const styles = StyleSheet.create({
   page: {
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     fontSize: 19,
     fontFamily: 'Helvetica-Bold',
     textAlign: 'center',
-    marginBottom: 5,
+    marginBottom: 12,
     textTransform: 'uppercase',
   },
 
@@ -169,52 +170,11 @@ const styles = StyleSheet.create({
   },
 });
 
-interface ResumeData {
-  contactInfo?: {
-    name?: string;
-    email?: string;
-    phone?: string;
-    linkedin?: string;
-    github?: string;
-  };
-
-  summary?: string;
-
-  technicalSkills?: {
-    languages?: string[];
-    frameworks?: string[];
-    databases?: string[];
-    tools?: string[];
-    operatingSystems?: string[];
-    cloudPlatforms?: string[];
-  };
-
-  workExperience?: Array<{
-    company?: string;
-    position?: string;
-    dates?: string;
-    achievements?: string[];
-  }>;
-
-  projects?: Array<{
-    name?: string;
-    description?: string;
-    technologies?: string[];
-    accomplishments?: string[];
-  }>;
-
-  education?: {
-    degree?: string;
-    fieldOfStudy?: string;
-    university?: string;
-    dates?: string;
-  };
-}
 
 export const ResumeTemplate = ({
-  data,
+  data = {} as ResumeData,
 }: {
-  data: ResumeData;
+  data?: ResumeData;
 }) => {
   return (
     <Document>
@@ -232,45 +192,39 @@ export const ResumeTemplate = ({
                 {data.contactInfo.name}
               </Text>
             )}
+            
+            {data.contactInfo.title && (
+              <Text style={{ textAlign: 'center', fontSize: 11, marginBottom: 6, fontFamily: 'Helvetica-Bold' }}>
+                {data.contactInfo.title}
+              </Text>
+            )}
 
             <View style={styles.contactInfo}>
-
-              {data.contactInfo.email && (
-                <Text style={styles.contactItem}>
-                  {data.contactInfo.email}
-                </Text>
-              )}
-
-              {data.contactInfo.phone && (
-                <Text style={styles.contactItem}>
-                  | {data.contactInfo.phone}
-                </Text>
-              )}
+              <Text style={styles.contactItem}>
+                {[
+                  data.contactInfo.location,
+                  data.contactInfo.email,
+                  data.contactInfo.phone,
+                ].filter(Boolean).join('  |  ')}
+              </Text>
 
               {data.contactInfo.linkedin && (
                 <Text style={styles.contactItem}>
-                  |{' '}
-                  <Link
-                    src={data.contactInfo.linkedin}
-                    style={styles.link}
-                  >
-                    LinkedIn
-                  </Link>
+                  | <Link src={data.contactInfo.linkedin} style={styles.link}>LinkedIn</Link>
                 </Text>
               )}
 
               {data.contactInfo.github && (
                 <Text style={styles.contactItem}>
-                  |{' '}
-                  <Link
-                    src={data.contactInfo.github}
-                    style={styles.link}
-                  >
-                    GitHub
-                  </Link>
+                  | <Link src={data.contactInfo.github} style={styles.link}>GitHub</Link>
                 </Text>
               )}
 
+              {data.contactInfo.portfolio && (
+                <Text style={styles.contactItem}>
+                  | <Link src={data.contactInfo.portfolio} style={styles.link}>Portfolio</Link>
+                </Text>
+              )}
             </View>
           </View>
         )}
@@ -318,6 +272,7 @@ export const ResumeTemplate = ({
                     tools: 'Tools',
                     operatingSystems: 'Operating Systems',
                     cloudPlatforms: 'Cloud Platforms',
+                    softSkills: 'Soft Skills',
                   };
 
                   return (
@@ -369,15 +324,15 @@ export const ResumeTemplate = ({
 
                       {exp.company && (
                         <Text style={styles.itemSubtitle}>
-                          {exp.company}
+                          {exp.company}{exp.location ? ` - ${exp.location}` : ''}
                         </Text>
                       )}
 
                     </View>
 
-                    {exp.dates && (
+                    {(exp.startDate || exp.endDate || exp.isCurrent) && (
                       <Text style={styles.itemDate}>
-                        {exp.dates}
+                        {exp.startDate || ''} - {exp.isCurrent ? 'Present' : (exp.endDate || '')}
                       </Text>
                     )}
 
@@ -476,40 +431,118 @@ export const ResumeTemplate = ({
             EDUCATION
         ========================= */}
 
-        {data.education && (
+        {data.education && data.education.length > 0 && (
           <View style={styles.section}>
-
-            <Text style={styles.sectionTitle}>
-              Education
-            </Text>
-
-            <View style={styles.itemHeader}>
-
-              <View style={styles.itemHeaderLeft}>
-
-                {data.education.university && (
-                  <Text style={styles.itemTitle}>
-                    {data.education.university}
-                  </Text>
+            <Text style={styles.sectionTitle}>Education</Text>
+            {data.education.map((edu, index) => (
+              <View style={styles.itemGroup} key={index}>
+                <View style={styles.itemHeader}>
+                  <View style={styles.itemHeaderLeft}>
+                    {edu.university && (
+                      <Text style={styles.itemTitle}>
+                        {edu.university}{edu.location ? `, ${edu.location}` : ''}
+                      </Text>
+                    )}
+                    {edu.degree && (
+                      <Text style={styles.educationDegree}>
+                        {edu.degree}{edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ''}
+                      </Text>
+                    )}
+                  </View>
+                  {(edu.startDate || edu.endDate || edu.isCurrent) && (
+                    <Text style={styles.itemDate}>
+                      {edu.startDate || ''} - {edu.isCurrent ? 'Present' : (edu.endDate || '')}
+                    </Text>
+                  )}
+                </View>
+                
+                {edu.gpa && (
+                  <Text style={{ fontSize: 9, marginTop: 1 }}>GPA: {edu.gpa}</Text>
                 )}
-
-                {data.education.degree && (
-                  <Text style={styles.educationDegree}>
-                    {data.education.degree}
-                    {data.education.fieldOfStudy
-                      ? ` in ${data.education.fieldOfStudy}`
-                      : ''}
-                  </Text>
+                {edu.honors && (
+                  <Text style={{ fontSize: 9, marginTop: 1 }}>Honors: {edu.honors}</Text>
                 )}
-
+                {edu.relevantCoursework && edu.relevantCoursework.length > 0 && (
+                  <Text style={{ fontSize: 9, marginTop: 1 }}>Relevant Coursework: {edu.relevantCoursework.join(', ')}</Text>
+                )}
               </View>
+            ))}
+          </View>
+        )}
+        
+        {/* =========================
+            CERTIFICATIONS
+        ========================= */}
+        {data.certifications && data.certifications.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Certifications</Text>
+            {data.certifications.map((cert, i) => (
+              <View style={styles.itemHeader} key={i}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={styles.itemTitle}>{cert.name}</Text>
+                  {cert.issuer && <Text style={styles.itemSubtitle}>{cert.issuer}</Text>}
+                </View>
+                {cert.date && <Text style={styles.itemDate}>{cert.date}</Text>}
+              </View>
+            ))}
+          </View>
+        )}
 
-              {data.education.dates && (
-                <Text style={styles.itemDate}>
-                  {data.education.dates}
+        {/* =========================
+            AWARDS
+        ========================= */}
+        {data.awards && data.awards.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Awards & Honors</Text>
+            {data.awards.map((award, i) => (
+              <View style={styles.itemGroup} key={i}>
+                <View style={styles.itemHeader}>
+                  <View style={styles.itemHeaderLeft}>
+                    <Text style={styles.itemTitle}>{award.title}</Text>
+                    {award.issuer && <Text style={styles.itemSubtitle}>{award.issuer}</Text>}
+                  </View>
+                  {award.date && <Text style={styles.itemDate}>{award.date}</Text>}
+                </View>
+                {award.description && <Text style={styles.projectDescription}>{award.description}</Text>}
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* =========================
+            VOLUNTEER
+        ========================= */}
+        {data.volunteer && data.volunteer.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Volunteer Experience</Text>
+            {data.volunteer.map((vol, i) => (
+              <View style={styles.itemGroup} key={i}>
+                <View style={styles.itemHeader}>
+                  <View style={styles.itemHeaderLeft}>
+                    <Text style={styles.itemTitle}>{vol.role}</Text>
+                    {vol.organization && <Text style={styles.itemSubtitle}>{vol.organization}</Text>}
+                  </View>
+                  {vol.dates && <Text style={styles.itemDate}>{vol.dates}</Text>}
+                </View>
+                {vol.description && <Text style={styles.projectDescription}>{vol.description}</Text>}
+              </View>
+            ))}
+          </View>
+        )}
+        
+        {/* =========================
+            LANGUAGES
+        ========================= */}
+        {data.languages && data.languages.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Languages</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+              {data.languages.map((lang, i) => (
+                <Text key={i} style={{ fontSize: 9.2, marginRight: 15 }}>
+                  <Text style={{ fontFamily: 'Helvetica-Bold' }}>{lang.language}</Text>
+                  {lang.proficiency ? ` - ${lang.proficiency}` : ''}
                 </Text>
-              )}
-
+              ))}
             </View>
           </View>
         )}
