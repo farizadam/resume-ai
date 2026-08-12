@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Resume AI",
-  description: "Interview practice and resume building in one app.",
+  title: "Resume AI | Land Your Dream Job",
+  description: "Stop staring at a blank page. Let our AI interview you and automatically build an ATS-beating resume in under 5 minutes.",
 };
 
 import SmoothScrolling from "@/components/SmoothScrolling";
