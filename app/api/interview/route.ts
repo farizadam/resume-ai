@@ -163,7 +163,7 @@ Questions Asked: ${interview.questionCount}
 
     const completion = await groq.chat.completions.create({
       messages: [systemPrompt, ...conversationHistory],
-      model: "llama-3.3-70b-versatile",
+      model: "openai/gpt-oss-120b",
       response_format: { type: "json_object" },
     });
 
@@ -238,7 +238,7 @@ Questions Asked: ${interview.questionCount}
     console.error("Interview POST error:", error);
 
     return NextResponse.json(
-      { error: "Something went wrong" },
+      { error: error instanceof Error ? error.message : "Something went wrong", details: String(error) },
       { status: 500 }
     );
   }
